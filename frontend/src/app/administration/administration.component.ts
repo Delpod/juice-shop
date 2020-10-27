@@ -48,9 +48,6 @@ export class AdministrationComponent implements OnInit {
     this.userService.find().subscribe((users) => {
       this.userDataSource = users
       this.userDataSourceHidden = users
-      for (let user of this.userDataSource) {
-        user.email = this.sanitizer.bypassSecurityTrustHtml(`<span class="${user.token ? 'confirmation' : 'error'}">${user.email}</span>`)
-      }
       this.userDataSource = new MatTableDataSource(this.userDataSource)
       this.userDataSource.paginator = this.paginatorUsers
       this.resultsLengthUser = users.length

@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { DomSanitizer } from '@angular/platform-browser'
 import { ProductReviewEditComponent } from '../product-review-edit/product-review-edit.component'
 import { UserService } from '../Services/user.service'
 import { ProductReviewService } from '../Services/product-review.service'
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core'
+import { Component, Inject, OnDestroy, OnInit, SecurityContext } from '@angular/core'
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
 import { dom, library } from '@fortawesome/fontawesome-svg-core'
 import { faArrowCircleLeft, faCrown, faPaperPlane, faThumbsUp, faUserEdit } from '@fortawesome/free-solid-svg-icons'
@@ -32,9 +33,10 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
   public reviewControl: FormControl = new FormControl('',[Validators.maxLength(160)])
   constructor (private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: { productData: Product}, private productReviewService: ProductReviewService,
-    private userService: UserService, private snackBar: MatSnackBar, private snackBarHelperService: SnackBarHelperService) { }
+    private userService: UserService, private snackBar: MatSnackBar, private snackBarHelperService: SnackBarHelperService, private sanitizer: DomSanitizer) { }
 
   ngOnInit () {
+    this.data.productData.description = this.sanitizer.sanitize(SecurityContext.HTML, this.data.productData.description)
     this.data.productData.points = Math.round(this.data.productData.price / 10)
     this.reviews$ = this.productReviewService.get(this.data.productData.id)
     this.userSubscription = this.userService.whoAmI().subscribe((user: any) => {

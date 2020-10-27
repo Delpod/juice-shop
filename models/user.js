@@ -26,6 +26,9 @@ module.exports = (sequelize, { STRING, BOOLEAN }) => {
     email: {
       type: STRING,
       unique: true,
+      validate: {
+        isEmail: true,
+      },
       set (email) {
         if (!utils.disableOnContainerEnv()) {
           utils.solveIf(challenges.persistedXssUserChallenge, () => { return utils.contains(email, '<iframe src="javascript:alert(`xss`)">') })
