@@ -2,6 +2,7 @@
  * Copyright (c) 2014-2020 Bjoern Kimminich.
  * SPDX-License-Identifier: MIT
  */
+require('dotenv').config()
 const startTime = Date.now()
 const path = require('path')
 const fs = require('fs')
