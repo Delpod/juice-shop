@@ -9,6 +9,7 @@ const models = require('../models/index')
 const challenges = require('../data/datacache').challenges
 const users = require('../data/datacache').users
 const config = require('config')
+const { Op } = models.Sequelize
 
 module.exports = function login () {
   function afterLogin (user, res, next) {
@@ -26,8 +27,16 @@ module.exports = function login () {
 
   return (req, res, next) => {
     verifyPreLoginChallenges(req)
-    models.sequelize.query(`SELECT * FROM Users WHERE email = '${req.body.email || ''}' AND password = '${insecurity.hash(req.body.password || '')}' AND deletedAt IS NULL`, { model: models.User, plain: true })
-      .then((authenticatedUser) => {
+    models.User.findOne({
+      where: {
+        email: req.body.email || '',
+        password: insecurity.hash(req.body.password || ''),
+        deletedAt: {
+          [Op.is]: null
+        }
+      },
+      plain: true
+    }).then((authenticatedUser) => {
         let user = utils.queryResultToJson(authenticatedUser)
         const rememberedEmail = insecurity.userEmailFrom(req)
         if (rememberedEmail && req.body.oauth) {

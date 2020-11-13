@@ -12,13 +12,11 @@ module.exports = function productReviews () {
   return (req, res, next) => {
     const user = insecurity.authenticatedUsers.from(req)
     db.reviews.update(
-      { _id: req.body.id },
+      { _id: `${req.body.id}`, author: user.data.email },
       { $set: { message: req.body.message } },
-      { multi: true }
     ).then(
       result => {
         utils.solveIf(challenges.noSqlReviewsChallenge, () => { return result.modified > 1 })
-        utils.solveIf(challenges.forgedReviewChallenge, () => { return user && user.data && result.original[0].author !== user.data.email && result.modified === 1 })
         res.json(result)
       }, err => {
         res.status(500).json(err)

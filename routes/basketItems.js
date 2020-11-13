@@ -52,6 +52,7 @@ module.exports.addBasketItem = function addBasketItem () {
 
 module.exports.quantityCheckBeforeBasketItemAddition = function quantityCheckBeforeBasketItemAddition () {
   return (req, res, next) => {
+    checkIfDeleted(res, next, req.body.ProductId)
     quantityCheck(req, res, next, req.body.ProductId, req.body.quantity)
   }
 }
@@ -69,6 +70,16 @@ module.exports.quantityCheckBeforeBasketItemUpdate = function quantityCheckBefor
     }).catch(error => {
       next(error)
     })
+  }
+}
+
+async function checkIfDeleted(res, next, id) {
+  const product = await models.Product.findOne({ where: { id }});
+  
+  if (!product || product.deletedAt) {
+    res.status(400).json({ error: res.__('This product is not available.') })
+  } else {
+    next();
   }
 }
 
