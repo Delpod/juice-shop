@@ -65,7 +65,8 @@ export class UserService {
   }
 
   oauthLogin (accessToken: string) {
-    return this.http.get('https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + accessToken)
+    this.isLoggedIn.next(true)
+    return this.http.post(this.hostServer + '/rest/user/login', { accessToken, oauth: true }).pipe(map((response: any) => response.authentication), catchError((err) => { throw err }))
   }
 
   saveLastLoginIp () {

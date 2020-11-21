@@ -18,19 +18,7 @@ export class OAuthComponent implements OnInit {
   constructor (private cookieService: CookieService, private userService: UserService, private router: Router, private route: ActivatedRoute, private ngZone: NgZone) { }
 
   ngOnInit () {
-    this.userService.oauthLogin(this.parseRedirectUrlParams()['access_token']).subscribe((profile: any) => {
-      let password = btoa(profile.email.split('').reverse().join(''))
-      this.userService.save({ email: profile.email, password: password, passwordRepeat: password }).subscribe(() => {
-        this.login(profile)
-      }, () => this.login(profile))
-    }, (error) => {
-      this.invalidateSession(error)
-      this.ngZone.run(() => this.router.navigate(['/login']))
-    })
-  }
-
-  login (profile: any) {
-    this.userService.login({ email: profile.email, password: btoa(profile.email.split('').reverse().join('')), oauth: true }).subscribe((authentication) => {
+    this.userService.oauthLogin(this.parseRedirectUrlParams()['access_token']).subscribe((authentication) => {
       let expires = new Date()
       expires.setHours(expires.getHours() + 8)
       this.cookieService.set('token', authentication.token, expires, '/')

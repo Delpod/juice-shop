@@ -39,15 +39,6 @@ export class LoginComponent implements OnInit {
   constructor (private configurationService: ConfigurationService, private userService: UserService, private windowRefService: WindowRefService, private cookieService: CookieService, private router: Router, private formSubmitService: FormSubmitService, private ngZone: NgZone) { }
 
   ngOnInit () {
-    const email = localStorage.getItem('email')
-    if (email) {
-      this.user = {}
-      this.user.email = email
-      this.rememberMe.setValue(true)
-    } else {
-      this.rememberMe.setValue(false)
-    }
-
     this.redirectUri = this.windowRefService.nativeWindow.location.protocol + '//' + this.windowRefService.nativeWindow.location.host
     this.configurationService.getApplicationConfiguration().subscribe((config) => {
       if (config && config.application && config.application.googleOauth) {
@@ -71,6 +62,7 @@ export class LoginComponent implements OnInit {
     this.user = {}
     this.user.email = this.emailControl.value
     this.user.password = this.passwordControl.value
+    this.user.rememberMe = this.rememberMe.value
     this.userService.login(this.user).subscribe((authentication: any) => {
       localStorage.setItem('token', authentication.token)
       let expires = new Date()
@@ -93,12 +85,6 @@ export class LoginComponent implements OnInit {
       this.emailControl.markAsPristine()
       this.passwordControl.markAsPristine()
     })
-
-    if (this.rememberMe.value) {
-      localStorage.setItem('email', this.user.email)
-    } else {
-      localStorage.removeItem('email')
-    }
 
     if (this.error && this.user.email && this.user.email.match(/support@.*/)) {
       console.log('@echipa de suport: Secretul nostru comun este încă Caoimhe cu parola de master gol!')

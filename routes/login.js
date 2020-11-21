@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+const axios = require('axios')
 const utils = require('../lib/utils')
 const insecurity = require('../lib/insecurity')
 const models = require('../models/index')
@@ -11,12 +12,53 @@ const users = require('../data/datacache').users
 const config = require('config')
 const { Op } = models.Sequelize
 
+async function verifyToken(token) {
+
+  try {
+    const response = await axios.get(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${token}`)
+  } catch (_) {
+    return null;
+  }
+
+  if (response.data.issued_to !== process.env.OAUTH_CLIENT_ID) {
+    return null
+  }
+
+  return response.data
+}
+
+async function loginOuath(token) {
+  const user = await verifyToken(token)
+
+  if (!user || !user.email) {
+    throw new Error('Cannot verify access token')
+  }
+
+  let userDb = await models.User.findOne({
+    where: {
+      email: user.email,
+    },
+    plain: true
+  })
+
+  if (userDb) {
+    return userDb
+  }
+
+  userDb = await models.User.create({
+    email: user.email,
+    passport: user.email + process.env.OUATH_SALT,
+  }).then((result) => result.get({ plain: true }));
+
+  return userDb
+}
+
 module.exports = function login () {
-  function afterLogin (user, res, next) {
+  function afterLogin (user, longLivedToken, res, next) {
     verifyPostLoginChallenges(user)
     models.Basket.findOrCreate({ where: { UserId: user.data.id }, defaults: {} })
       .then(([basket]) => {
-        const token = insecurity.authorize(user)
+        const token = insecurity.authorize(user, longLivedToken)
         user.bid = basket.id // keep track of original basket for challenge solution check
         insecurity.authenticatedUsers.put(token, user)
         res.json({ authentication: { token, bid: basket.id, umail: user.data.email } })
@@ -26,26 +68,24 @@ module.exports = function login () {
   }
 
   return (req, res, next) => {
-    verifyPreLoginChallenges(req)
-    models.User.findOne({
-      where: {
-        email: req.body.email || '',
-        password: insecurity.hash(req.body.password || ''),
-        deletedAt: {
-          [Op.is]: null
-        }
-      },
-      plain: true
-    }).then((authenticatedUser) => {
+    verifyPreLoginChallenges(req);
+
+    (
+      req.body.oauth
+        ? loginOuath(req.body.accessToken)
+        : models.User.findOne({
+          where: {
+            email: req.body.email || '',
+            password: insecurity.hash(req.body.password || ''),
+            deletedAt: {
+              [Op.is]: null
+            }
+          },
+          plain: true
+        })
+    ).then((authenticatedUser) => {
         let user = utils.queryResultToJson(authenticatedUser)
-        const rememberedEmail = insecurity.userEmailFrom(req)
-        if (rememberedEmail && req.body.oauth) {
-          models.User.findOne({ where: { email: rememberedEmail } }).then(rememberedUser => {
-            user = utils.queryResultToJson(rememberedUser)
-            utils.solveIf(challenges.loginCisoChallenge, () => { return user.data.id === users.ciso.id })
-            afterLogin(user, res, next)
-          })
-        } else if (user.data && user.data.id && user.data.totpSecret !== '') {
+        if (user.data && user.data.id && user.data.totpSecret !== '') {
           res.status(401).json({
             status: 'totp_token_required',
             data: {
@@ -56,7 +96,7 @@ module.exports = function login () {
             }
           })
         } else if (user.data && user.data.id) {
-          afterLogin(user, res, next)
+          afterLogin(user, req.body.rememberMe, res, next)
         } else {
           res.status(401).send(res.__('Invalid email or password.'))
         }
