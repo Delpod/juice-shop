@@ -90,6 +90,10 @@ async function quantityCheck (req, res, next, id, quantity) {
 
   const product = await models.Quantity.findOne({ where: { ProductId: id } })
 
+  if (quantity < 1) {
+    return res.status(400).json({ error: res.__('Quantity must be bigger than 0.') })
+  }
+
   if (!product.limitPerUser || (product.limitPerUser && (product.limitPerUser - previousPurchase) >= quantity) || insecurity.isDeluxe(req)) {
     if (product.quantity >= quantity) {
       next()
