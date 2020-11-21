@@ -54,7 +54,6 @@
   "scripts": {
     "build": "cd frontend && node ./node_modules/@angular/cli/bin/ng build --aot --prod --output-hashing=none --vendor-chunk=true --source-map=false",
     "e2e": "node test/e2eTests.js",
-    "frisby": "nyc --report-dir=./build/reports/coverage/api-tests jest --silent --runInBand --forceExit",
     "postinstall": "cd frontend && npm install && cd .. && npm run build",
     "lint": "standard && cd frontend && ng lint && cd ..",
     "lint:config": "schema validate -s config.schema.yml",
@@ -146,19 +145,8 @@
     "z85": "^0.0.2"
   },
   "devDependencies": {
-    "cross-spawn": "^7.0.3",
-    "frisby": "^2.1.2",
     "grunt-cli": "^1.3.2",
-    "http-server": "^0.12.3",
-    "mocha": "^8.1.1",
-    "node-fetch": "2.1.2",
-    "nyc": "^15.1.0",
-    "shelljs": "^0.8.4",
-    "sinon": "^9.0.2",
-    "sinon-chai": "^3.5.0",
-    "socket.io-client": "^2.3.0",
-    "standard": "^14.3.4",
-    "webdriver-manager": "^12.1.7"
+    "socket.io-client": "^2.3.0"
   },
   "engines": {
     "node": "10 - 14"
@@ -184,11 +172,8 @@
       "/frontend/**"
     ],
     "env": {
-      "jasmine": true,
       "node": true,
-      "browser": true,
-      "mocha": true,
-      "protractor": true
+      "browser": true
     },
     "global": [
       "angular",
