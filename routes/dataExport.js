@@ -15,7 +15,6 @@ module.exports = function dataExport () {
     if (loggedInUser && loggedInUser.data && loggedInUser.data.email && loggedInUser.data.id) {
       const username = loggedInUser.data.username
       const email = loggedInUser.data.email
-      const updatedEmail = email.replace(/[aeiou]/gi, '*')
       const userData = {
         username,
         email,
@@ -32,7 +31,7 @@ module.exports = function dataExport () {
         })
       })
 
-      db.orders.find({ email: updatedEmail }).then(orders => {
+      db.orders.find({ email }).then(orders => {
         if (orders.length > 0) {
           orders.map(order => {
             userData.orders.push({
@@ -64,11 +63,11 @@ module.exports = function dataExport () {
           res.status(200).send({ userData: JSON.stringify(userData, null, 2), confirmation: 'Your data export will open in a new Browser window.' })
         },
         () => {
-          next(new Error(`Error retrieving reviews for ${updatedEmail}`))
+          next(new Error(`Error retrieving reviews for ${email}`))
         })
       },
       () => {
-        next(new Error(`Error retrieving orders for ${updatedEmail}`))
+        next(new Error(`Error retrieving orders for ${email}`))
       })
     } else {
       next(new Error('Blocked illegal activity by ' + req.connection.remoteAddress))

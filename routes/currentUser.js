@@ -19,12 +19,7 @@ module.exports = function retrieveLoggedInUser () {
       user = undefined
     } finally {
       const response = { user: { id: (user && user.data ? user.data.id : undefined), email: (user && user.data ? user.data.email : undefined), lastLoginIp: (user && user.data ? user.data.lastLoginIp : undefined), profileImage: (user && user.data ? user.data.profileImage : undefined) } }
-      if (req.query.callback === undefined) {
-        res.json(response)
-      } else {
-        utils.solveIf(challenges.emailLeakChallenge, () => { return true })
-        res.jsonp(response)
-      }
+      res.json(response)
     }
   }
 }

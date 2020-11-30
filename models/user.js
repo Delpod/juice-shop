@@ -41,7 +41,11 @@ module.exports = (sequelize, { STRING, BOOLEAN }) => {
     password: {
       type: STRING,
       set (clearTextPassword) {
-        this.setDataValue('password', insecurity.hash(clearTextPassword))
+        if (!clearTextPassword || clearTextPassword.length < 5) {
+          throw new Error('Password too short');
+        }
+
+        this.setDataValue('password', insecurity.hash(`${clearTextPassword}-${process.env.PASSWORD_SALT}`))
       }
     },
     role: {

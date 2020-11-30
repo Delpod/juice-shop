@@ -1,6 +1,6 @@
 -
   email: admin
-  password: 'admin123'
+  password: 'admin1995'
   key: admin
   role: 'admin'
   securityQuestion:
@@ -208,7 +208,7 @@
     answer: 'Silence of the Lambs' # https://www.imdb.com/title/tt0102926/
 -
   email: demo
-  password: 'demo'
+  password: 'demo1'
   customDomain: true
   key: test
   role: 'customer'

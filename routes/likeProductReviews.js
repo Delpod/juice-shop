@@ -17,34 +17,10 @@ module.exports = function productReviews () {
       if (!likedBy.includes(user.data.email)) {
         db.reviews.update(
           { _id: id },
-          { $inc: { likesCount: 1 } }
+          { $inc: { likesCount: 1 }, $push: { likedBy: user.data.email } }
         ).then(
           result => {
-            // Artificial wait for timing attack challenge
-            setTimeout(function () {
-              db.reviews.findOne({ _id: id }).then(review => {
-                var likedBy = review.likedBy
-                likedBy.push(user.data.email)
-                var count = 0
-                for (var i = 0; i < likedBy.length; i++) {
-                  if (likedBy[i] === user.data.email) {
-                    count++
-                  }
-                }
-                utils.solveIf(challenges.timingAttackChallenge, () => { return count > 2 })
-                db.reviews.update(
-                  { _id: id },
-                  { $set: { likedBy: likedBy } }
-                ).then(
-                  result => {
-                    res.json(result)
-                  }, err => {
-                    res.status(500).json(err)
-                  })
-              }, () => {
-                res.status(400).json({ error: 'Wrong Params' })
-              })
-            }, 150)
+            res.json(result)
           }, err => {
             res.status(500).json(err)
           })

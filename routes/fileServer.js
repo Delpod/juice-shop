@@ -20,10 +20,9 @@ module.exports = function servePublicFiles () {
     }
   }
 
-  function verify (file, res, next) {
-    if (file && (endsWithAllowlistedFileType(file) || (file === 'incident-support.kdbx'))) {
-      file = insecurity.cutOffPoisonNullByte(file)
-
+  function verify(file, res, next) {
+    const nullByte = '%00'
+    if (file && !utils.contains(file, nullByte) && (endsWithAllowlistedFileType(file) || (file === 'incident-support.kdbx'))) {
       utils.solveIf(challenges.directoryListingChallenge, () => { return file.toLowerCase() === 'acquisitions.md' })
       verifySuccessfulPoisonNullByteExploit(file)
 

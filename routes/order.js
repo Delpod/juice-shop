@@ -149,7 +149,7 @@ module.exports = function placeOrder () {
             addressId: req.body.orderDetails ? req.body.orderDetails.addressId : null,
             orderId: orderId,
             delivered: false,
-            email: (email ? email.replace(/[aeiou]/gi, '*') : undefined),
+            email: email,
             totalPrice: totalPrice,
             products: basketProducts,
             bonus: totalPoints,
@@ -177,11 +177,13 @@ function calculateApplicableDiscount (basket, req) {
     utils.solveIf(challenges.forgedCouponChallenge, () => { return discount >= 80 })
     return discount
   } else if (req.body.couponData) {
-    const couponData = Buffer.from(req.body.couponData, 'base64').toString().split('-')
-    const couponCode = couponData[0]
-    const couponDate = couponData[1]
+    const couponCode = Buffer.from(req.body.couponData, 'base64').toString()
     const campaign = campaigns[couponCode]
-    if (campaign && couponDate == campaign.validOn) { // eslint-disable-line eqeqeq
+    const serverDate = new Date()
+    const offsetTimeZone = (serverDate.getTimezoneOffset() + 60) * 60 * 1000
+    serverDate.setHours(0, 0, 0, 0)
+    serverDate = serverDate.getTime() - offsetTimeZone
+    if (campaign && serverDate.getTime() == campaign.validOn) { // eslint-disable-line eqeqeq
       utils.solveIf(challenges.manipulateClockChallenge, () => { return campaign.validOn < new Date() })
       return campaign.discount
     }

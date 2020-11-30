@@ -47,7 +47,7 @@ async function loginOuath(token) {
 
   userDb = await models.User.create({
     email: user.email,
-    passport: user.email + process.env.OUATH_SALT,
+    passport: user.email + process.env.OAUTH_SALT,
   }).then((result) => result.get({ plain: true }));
 
   return userDb
@@ -68,6 +68,10 @@ module.exports = function login () {
   }
 
   return (req, res, next) => {
+    if (!req.body.password || req.body.password.length < 5) {
+      return res.status(401).send(res.__('Password too short'))
+    }
+
     verifyPreLoginChallenges(req);
 
     (
@@ -76,10 +80,8 @@ module.exports = function login () {
         : models.User.findOne({
           where: {
             email: req.body.email || '',
-            password: insecurity.hash(req.body.password || ''),
-            deletedAt: {
-              [Op.is]: null
-            }
+            password: insecurity.hash(`${req.body.password}-${process.env.PASSWORD_SALT}`),
+            isActive: true
           },
           plain: true
         })

@@ -48,7 +48,7 @@ export class PaymentComponent implements OnInit {
   public facebookUrl = null
   public applicationName = 'OWASP Juice Shop'
   private campaignCoupon: string
-  public couponControl: FormControl = new FormControl('',[Validators.required, Validators.minLength(10), Validators.maxLength(10)])
+  public couponControl: FormControl = new FormControl('',[Validators.required, Validators.minLength(10), Validators.maxLength(32)])
   public clientDate: any
   public paymentId: any = undefined
   public couponPanelExpanded: boolean = false
@@ -127,7 +127,7 @@ export class PaymentComponent implements OnInit {
     const offsetTimeZone = (this.clientDate.getTimezoneOffset() + 60) * 60 * 1000
     this.clientDate.setHours(0,0,0,0)
     this.clientDate = this.clientDate.getTime() - offsetTimeZone
-    sessionStorage.setItem('couponDetails', this.campaignCoupon + '-' + this.clientDate)
+    sessionStorage.setItem('couponDetails', this.campaignCoupon)
     const campaign = this.campaigns[this.couponControl.value]
     if (campaign) {
       if (this.clientDate === campaign.validOn) {

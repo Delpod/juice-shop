@@ -22,7 +22,7 @@ module.exports = function changePassword () {
       const token = headers.authorization ? headers.authorization.substr('Bearer='.length) : null
       const loggedInUser = insecurity.authenticatedUsers.get(token)
       if (loggedInUser) {
-        if (currentPassword && insecurity.hash(currentPassword) !== loggedInUser.data.password) {
+        if (!currentPassword || insecurity.hash(currentPassword) !== loggedInUser.data.password) {
           res.status(401).send(res.__('Current password is not correct.'))
         } else {
           models.User.findByPk(loggedInUser.data.id).then(user => {

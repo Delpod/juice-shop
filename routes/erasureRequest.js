@@ -14,7 +14,9 @@ module.exports = function erasureRequest () {
         UserId: loggedInUser.data.id,
         deletionRequested: true
       }
-      models.PrivacyRequest.create(userData).then(() => {
+      models.User.update({ isActive: false }, { where: { id: loggedInUser.data.id } })
+      .then(() => models.PrivacyRequest.create(userData))
+      .then(() => {
         res.status(202).send()
       }).catch((err) => {
         next(err)

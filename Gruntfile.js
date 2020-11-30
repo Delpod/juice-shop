@@ -45,7 +45,6 @@ module.exports = function (grunt) {
               'data/*.js',
               'data/static/**',
               'data/chatbot/.gitkeep',
-              'encryptionkeys/**',
               'frontend/dist/frontend/**',
               'ftp/**',
               'i18n/.gitkeep',

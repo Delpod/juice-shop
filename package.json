@@ -149,7 +149,7 @@
     "socket.io-client": "^2.3.0"
   },
   "engines": {
-    "node": "10 - 14"
+    "node": "12 - 14"
   },
   "os": [
     "win32",
