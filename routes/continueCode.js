@@ -4,7 +4,7 @@
  */
 
 const Hashids = require('hashids/cjs')
-const hashids = new Hashids('this is my salt', 60, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890')
+const hashids = new Hashids('this is not original salt', 60, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890')
 const challenges = require('../data/datacache').challenges
 
 module.exports = function retrieveCurrentContinueCode () {
