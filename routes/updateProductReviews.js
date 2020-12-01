@@ -10,9 +10,15 @@ const insecurity = require('../lib/insecurity')
 
 module.exports = function productReviews () {
   return (req, res, next) => {
+    const id = Number(req.body.id)
+
+    if (!isFinite(id)) {
+      return res.status(400).send(res.__('Invalid id'))
+    }
+
     const user = insecurity.authenticatedUsers.from(req)
     db.reviews.update(
-      { _id: `${req.body.id}`, author: user.data.email },
+      { _id: id, author: user.data.email },
       { $set: { message: req.body.message } },
     ).then(
       result => {

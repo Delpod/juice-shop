@@ -10,7 +10,7 @@ const models = require('../models/index')
 const challenges = require('../data/datacache').challenges
 const users = require('../data/datacache').users
 const config = require('config')
-const { Op } = models.Sequelize
+const mongo = require('../data/mongodb')
 
 async function verifyToken(token) {
 
@@ -85,7 +85,8 @@ module.exports = function login () {
           },
           plain: true
         })
-    ).then((authenticatedUser) => {
+    ).then(async (authenticatedUser) => {
+        console.log(await mongo.reviews.find());
         let user = utils.queryResultToJson(authenticatedUser)
         if (user.data && user.data.id && user.data.totpSecret !== '') {
           res.status(401).json({
@@ -108,7 +109,8 @@ module.exports = function login () {
   }
 
   function verifyPreLoginChallenges (req) {
-    utils.solveIf(challenges.weakPasswordChallenge, () => { return req.body.email === 'admin@' + config.get('application.domain') && req.body.password === 'admin123' })
+    utils.solveIf(challenges.weakPasswordChallenge, () => { return req.body.email === 'admin@' + config.get('application.domain') && req.body.password === 'admin1995' })
+    utils.solveIf(challenges.weakPasswordChallenge, () => { return req.body.email === 'adminek@' + config.get('application.domain') && req.body.password === '1995adminek' })
     utils.solveIf(challenges.loginSupportChallenge, () => { return req.body.email === 'support@' + config.get('application.domain') && req.body.password === 'J6aVjTgOpRs$?5l+Zkq2AYnCE@RF§P' })
     utils.solveIf(challenges.loginRapperChallenge, () => { return req.body.email === 'mc.safesearch@' + config.get('application.domain') && req.body.password === 'Mr. N00dles' })
     utils.solveIf(challenges.loginAmyChallenge, () => { return req.body.email === 'amy@' + config.get('application.domain') && req.body.password === 'K1f.....................' })

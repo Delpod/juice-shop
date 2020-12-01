@@ -10,9 +10,15 @@ const insecurity = require('../lib/insecurity')
 
 module.exports = function productReviews () {
   return (req, res, next) => {
+    const id = Number(req.params.id)
+
+    if (!isFinite(id)) {
+      return res.status(400).send(res.__('Invalid id'))
+    }
+
     const user = insecurity.authenticatedUsers.from(req)
     db.reviews.insert({
-      product: req.params.id,
+      product: id,
       message: req.body.message,
       author: user.data.email,
       likesCount: 0,
