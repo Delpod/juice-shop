@@ -25,6 +25,34 @@
     - fullName: 'Administrator'
       cardNum: 4024007105648108
       expMonth: 4
+      expYear: 2086
+-
+  email: adminek
+  password: '1995adminek'
+  key: adminek
+  role: 'admin'
+  securityQuestion:
+    id: 11
+    answer: 'Shadows for Silence in the Forests of Hell'
+  feedback:
+    comment: 'I love this shop! Best products in town! Highly recommended!'
+    rating: 4
+  address:
+    - fullName: 'Adminek'
+      mobileNum: 1234567890
+      zipCode: '1337'
+      streetAddress: '0869 Test Street'
+      city: 'Test'
+      state: 'Test'
+      country: 'Test'
+  card:
+    - fullName: 'Adminek'
+      cardNum: 4716190207784368
+      expMonth: 1
+      expYear: 2081
+    - fullName: 'Administrator'
+      cardNum: 4204007105648008
+      expMonth: 3
       expYear: 2086      
 -
   email: jim
