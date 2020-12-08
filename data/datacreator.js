@@ -573,6 +573,7 @@ function createSecurityAnswer (UserId, SecurityQuestionId, answer) {
 
 function createOrders () {
   const email = 'admin@' + config.get('application.domain')
+  const email2 = 'slackcircus@' + config.get('application.domain')
   const products = config.get('products')
   const basket1Products = [
     {
@@ -618,10 +619,28 @@ function createOrders () {
     }
   ]
 
+  const basket4Products = [
+    {
+      quantity: 8,
+      id: products[4].id,
+      name: products[4].name,
+      price: products[4].price,
+      total: products[4].price * 8
+    },
+    {
+      quantity: 1,
+      id: products[2].id,
+      name: products[2].name,
+      price: products[2].price,
+      total: products[2].price * 2
+    }
+  ]
+
+
   const orders = [
     {
       orderId: insecurity.hash(email).slice(0, 4) + '-' + utils.randomHexString(16),
-      email: (email ? email.replace(/[aeiou]/gi, '*') : undefined),
+      email: email,
       totalPrice: basket1Products[0].total + basket1Products[1].total,
       products: basket1Products,
       eta: Math.floor((Math.random() * 5) + 1).toString(),
@@ -629,7 +648,7 @@ function createOrders () {
     },
     {
       orderId: insecurity.hash(email).slice(0, 4) + '-' + utils.randomHexString(16),
-      email: (email ? email.replace(/[aeiou]/gi, '*') : undefined),
+      email: email,
       totalPrice: basket2Products[0].total,
       products: basket2Products,
       eta: '0',
@@ -637,7 +656,15 @@ function createOrders () {
     },
     {
       orderId: insecurity.hash('demo').slice(0, 4) + '-' + utils.randomHexString(16),
-      email: 'demo'.replace(/[aeiou]/gi, '*'),
+      email: 'demo',
+      totalPrice: basket3Products[0].total + basket3Products[1].total,
+      products: basket3Products,
+      eta: '0',
+      delivered: true
+    },
+    {
+      orderId: insecurity.hash(email2).slice(0, 4) + '-' + utils.randomHexString(16),
+      email: email2,
       totalPrice: basket3Products[0].total + basket3Products[1].total,
       products: basket3Products,
       eta: '0',

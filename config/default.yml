@@ -120,6 +120,8 @@ products:
     deluxePrice: 1.99
     limitPerUser: 5
     image: lemon_juice.jpg
+    reviews:
+      - { text: 'I have the power when I drink this!', author: slackcircus }
   -
     name: 'Banana Juice (1000ml)'
     description: 'Monkeys love it the most.'

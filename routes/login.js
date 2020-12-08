@@ -10,7 +10,6 @@ const models = require('../models/index')
 const challenges = require('../data/datacache').challenges
 const users = require('../data/datacache').users
 const config = require('config')
-const mongo = require('../data/mongodb')
 
 async function verifyToken(token) {
 
@@ -86,7 +85,6 @@ module.exports = function login () {
           plain: true
         })
     ).then(async (authenticatedUser) => {
-        console.log(await mongo.reviews.find());
         let user = utils.queryResultToJson(authenticatedUser)
         if (user.data && user.data.id && user.data.totpSecret !== '') {
           res.status(401).json({

@@ -35,7 +35,7 @@
     id: 11
     answer: 'Shadows for Silence in the Forests of Hell'
   feedback:
-    comment: 'I love this shop! Best products in town! Highly recommended!'
+    comment: 'I really like this shop! Best products in town! Highly recommended!'
     rating: 4
   address:
     - fullName: 'Adminek'
@@ -257,6 +257,28 @@
       cardNum: 1234567812345678
       expMonth: 12
       expYear: 2099
+-
+  email: slackcircus
+  password: 'bythepowerofgrayskull'
+  key: slackcircus
+  role: 'customer'
+  walletBalance: 200
+  securityQuestion:
+    id: 1
+    answer: 'She-Ra'
+  address:
+    - fullName: 'Prince Adam'
+      mobileNum: 2006000000
+      zipCode: '19823'
+      streetAddress: 'Castle'
+      city: 'Grayskull'
+      state: 'Eternia'
+      country: 'Universe'
+  card:
+    - fullName: 'PrinceAdam'
+      cardNum: 1982198319821983
+      expMonth: 12
+      expYear: 2082
 -
   email: john
   username: j0hNny
